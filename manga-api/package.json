@@ -1,0 +1,17 @@
+{
+  "name": "manga-api",
+  "version": "0.1.0",
+  "description": "Provides manga meta information",
+  "main": "index.js",
+  "keywords": [
+    "manga",
+    "information",
+    "meta"
+  ],
+  "author": "Yichuan Shen",
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^11.2.0",
+    "request": "^2.81.0"
+  }
+}
