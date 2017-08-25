@@ -2,9 +2,8 @@ const {URL} = require('url')
 const request = require('request-promise-native')
 const {JSDOM} = require('jsdom')
 
-const noop = () => {}
 const attr = (obj, attr) => obj == null ? '' : obj[attr]
-const headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'}
+const headers = {'User-Agent': 'mangamanga'}
 
 exports.search = function(str) {
     return request({url: `http://mangafox.me/search.php?name=${str}&advopts=1`, headers})
@@ -68,20 +67,18 @@ exports.chapter = function(url) {
     .then(body => new JSDOM(body).window.document)
     .then(document => ({
         querySelector: x => document.querySelector(x),
-        querySelectorAll: x => [...document.querySelectorAll(x)]
+        querySelectorAll: x => [...document.querySelectorAll(x)],
+        t: attr(document.querySelector('#tip strong'), 'textContent')
     }))
     .then(({querySelector, querySelectorAll}) => ({
         url,
         mangaUrl: attr(querySelector('#series strong a'), 'href'),
         id: attr(querySelector('#series h1 a'), 'textContent')
             .replace(
-                attr(querySelector('#series strong a'), 'textContent')
-                    .replace('Manga', '').trim(),
+                attr(querySelector('#series strong a'), 'textContent').replace('Manga', '').trim(),
                 ''
             ).trim(),
-        title: attr(querySelector('#tip strong'), 'textContent')
-            .slice(attr(querySelector('#tip strong'), 'textContent').indexOf(':') + 1)
-            .trim(),
+        title: t.slice(t.indexOf(':') + 1).trim(),
         pages: querySelectorAll('#top_chapter_list + * select option')
             .filter(option => option.value !== '0')
             .map(option => ({
