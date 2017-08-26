@@ -16,6 +16,20 @@ export default class Viewer extends Component {
             clearTimeout(this.resizeId)
             this.resizeId = setTimeout(this.updateState, 500)
         })
+
+        document.addEventListener('keyup', evt => {
+            if (evt.keyCode === 37) {
+                // Left
+
+                let {onPreviousClick = () => {}} = this.props
+                onPreviousClick(evt)
+            } else if (evt.keyCode === 39) {
+                // Right
+
+                let {onNextClick = () => {}} = this.props
+                onNextClick(evt)
+            }
+        })
     }
 
     componentWillReceiveProps(nextProps) {
@@ -47,8 +61,14 @@ export default class Viewer extends Component {
         }
     }
 
+    handleImageLoad = () => {
+        this.updateState()
+        this.element.scrollTop = this.element.scrollLeft = 0
+    }
+
     render() {
         return <section
+            ref={el => this.element = el}
             id="viewer"
             class={classNames({
                 zoom: this.state.zoom,
@@ -61,7 +81,7 @@ export default class Viewer extends Component {
                 src={this.props.src || './img/blank.svg'}
 
                 onClick={this.toggleZoom}
-                onLoad={this.updateState}
+                onLoad={this.handleImageLoad}
             />
 
             <img
@@ -70,8 +90,8 @@ export default class Viewer extends Component {
                 src={this.props.src || './img/blank.svg'}
             />
 
-            <div class="prev" title="Previous Page" />
-            <div class="next" title="Next Page" />
+            <div class="prev" title="Previous Page" onClick={this.props.onPreviousClick} />
+            <div class="next" title="Next Page" onClick={this.props.onNextClick} />
         </section>
     }
 }

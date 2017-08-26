@@ -104,12 +104,13 @@ body {
         right: 0;
         top: 0;
         bottom: 0;
+        background: black;
         opacity: 0;
         pointer-events: none;
-        transition: background .2s;
+        transition: opacity .2s;
     }
     #busy-screen.show {
         cursor: wait;
-        background: #ddd;
+        opacity: .2;
         pointer-events: all;
 }
