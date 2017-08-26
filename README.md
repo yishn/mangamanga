@@ -1,2 +1,3 @@
 # mangamanga
-A manga reader.
+
+A manga reader. This is a work in progress.

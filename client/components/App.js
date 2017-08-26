@@ -9,8 +9,6 @@ export default class App extends Component {
     constructor() {
         super()
 
-        window.App = this
-
         this.state = {
             busy: false,
             current: null,

@@ -18,5 +18,5 @@ app.get('/:method(manga|page)', (req, res) => {
 })
 
 app.listen(3000, () => {
-    console.log('mangamanga listening on port 3000...')
+    console.log('mangamanga listening at http://localhost:3000/...')
 })
