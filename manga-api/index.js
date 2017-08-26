@@ -2,7 +2,7 @@ const providers = [
     require('./providers/mangafox')
 ]
 
-let chapterCache = {}
+let pageCache = {}
 
 exports.search = function(str) {
     return Promise.all(providers.map(x => x.search(str)))
@@ -19,15 +19,15 @@ let createMethod = method => function(url) {
 
 exports.info = createMethod('info')
 
-exports.chapter = function(url) {
-    if (!(url in chapterCache)) {
-        let result = createMethod('chapter')(url)
-        chapterCache[url] = result
+exports.page = function(url) {
+    if (!(url in pageCache)) {
+        let result = createMethod('page')(url)
+        pageCache[url] = result
     }
 
-    return chapterCache[url]
+    return pageCache[url]
 }
 
 exports.clearCache = function() {
-    chapterCache = {}
+    pageCache = {}
 }

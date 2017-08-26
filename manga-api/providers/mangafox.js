@@ -53,7 +53,7 @@ exports.info = function(url) {
     }))
 }
 
-exports.chapter = function(url) {
+exports.page = function(url) {
     return request({url, headers, gzip: true})
     .then(body => new JSDOM(body).window.document)
     .then(document => ({
@@ -64,27 +64,19 @@ exports.chapter = function(url) {
     .then(({querySelector, querySelectorAll, t}) => ({
         url,
         mangaUrl: attr(querySelector('#series strong a'), 'href'),
-        id: attr(querySelector('#series h1 a'), 'textContent')
+        chapter: attr(querySelector('#series h1 a'), 'textContent')
             .replace(
                 attr(querySelector('#series strong a'), 'textContent').replace('Manga', '').trim(),
                 ''
             ).trim(),
-        title: t.slice(t.indexOf(':') + 1).trim(),
+        chapterTitle: t.slice(t.indexOf(':') + 1).trim(),
+        src: attr(querySelector('#viewer img'), 'src'),
+        page: attr(querySelector('#top_chapter_list + * select option[selected]'), 'value'),
         pages: querySelectorAll('#top_chapter_list + * select option')
             .filter(option => option.value !== '0')
             .map(option => ({
                 id: option.value,
-                url: url.slice(0, -[...url].reverse().indexOf('/')) + `${option.value}.html`,
-                src: option.selected ? attr(querySelector('#viewer img'), 'src') : undefined,
-
-                get() {
-                    if (option.selected)
-                        return Promise.resolve(this.src)
-
-                    return request({url: this.url, headers, gzip: true})
-                        .then(body => new JSDOM(body).window.document)
-                        .then(document => attr(document.querySelector('#viewer img'), 'src'))
-                }
+                url: url.slice(0, -[...url].reverse().indexOf('/')) + `${option.value}.html`
             }))
     }))
 }
