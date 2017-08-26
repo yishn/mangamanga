@@ -39,6 +39,17 @@ export default class App extends Component {
         return fetch(`./manga/?url=${url}`)
         .then(r => r.ok ? r.json() : Promise.reject())
         .then(data => this.manga = data)
+        .then(data => {
+            this.setState({
+                list: this.state.list.map(item => item.url !== url ? item : {
+                    ...item,
+                    title: data.title,
+                    cover: data.cover
+                })
+            })
+
+            return data
+        })
     }
 
     getPage(url = null) {
