@@ -1,0 +1,11 @@
+@import url('https://rsms.me/interface/interface.css');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font: 100%/1.5 Interface, sans-serif;
+}
