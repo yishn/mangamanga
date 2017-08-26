@@ -8,17 +8,8 @@ const headers = {'User-Agent': 'mangamanga'}
 exports.search = function(str) {
     return request({url: `http://mangafox.me/search.php?name=${str}&advopts=1`, headers})
     .then(body => new JSDOM(body).window.document)
-    .then(document => document.querySelector('#mangalist'))
-    .then(listEl => {
-        if (listEl == null) {
-            return new Promise(resolve => {
-                setTimeout(() => resolve(exports.search(str)), 6000)
-            })
-        }
-
-        return listEl.querySelectorAll('#mangalist .list li')
-    })
-    .then(liEls => [...liEls].map(li => ({
+    .then(document => [...document.querySelector('#mangalist .list li')])
+    .then(liEls => liEls.map(li => ({
         url: attr(li.querySelector('a'), 'href'),
         cover: attr(li.querySelector('img'), 'src'),
         completed: li.querySelector('.tag_completed') != null,
@@ -30,7 +21,7 @@ exports.search = function(str) {
 }
 
 exports.supports = function(url) {
-    return new URL(url).hostname.includes('mangafox.com')
+    return new URL(url).hostname.includes('mangafox')
 }
 
 exports.info = function(url) {
@@ -58,7 +49,7 @@ exports.info = function(url) {
             id: attr(li.querySelector('.tips'), 'textContent')
                 .replace(title, '').trim(),
             title: attr(li.querySelector('.title'), 'textContent')
-        }))
+        })).reverse()
     }))
 }
 
@@ -70,7 +61,7 @@ exports.chapter = function(url) {
         querySelectorAll: x => [...document.querySelectorAll(x)],
         t: attr(document.querySelector('#tip strong'), 'textContent')
     }))
-    .then(({querySelector, querySelectorAll}) => ({
+    .then(({querySelector, querySelectorAll, t}) => ({
         url,
         mangaUrl: attr(querySelector('#series strong a'), 'href'),
         id: attr(querySelector('#series h1 a'), 'textContent')
@@ -84,9 +75,11 @@ exports.chapter = function(url) {
             .map(option => ({
                 id: option.value,
                 url: url.slice(0, -[...url].reverse().indexOf('/')) + `${option.value}.html`,
+                src: option.selected ? attr(querySelector('#viewer img'), 'src') : undefined,
+
                 get() {
                     if (option.selected)
-                        return Promise.resolve(attr(querySelector('#viewer img'), 'src'))
+                        return Promise.resolve(this.src)
 
                     return request({url: this.url, headers, gzip: true})
                         .then(body => new JSDOM(body).window.document)
