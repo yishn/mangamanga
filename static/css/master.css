@@ -6,6 +6,110 @@
     padding: 0;
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     font: 100%/1.5 Interface, sans-serif;
+    color: #333;
+}
+
+#root {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    height: 100%;
+}
+
+#sidebar {
+        width: 250px;
+        overflow: auto;
+        background: #eee;
+    }
+    #sidebar ul {
+        list-style: none;
+    }
+    #sidebar li {
+        padding: .5em;
+        height: 80px;
+        overflow: hidden;
+        line-height: calc(80px - 1em);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background .2s, color .2s;
+    }
+    #sidebar li:hover {
+        background: #ddd;
+    }
+    #sidebar li.current {
+        background: black;
+        color: #eee;
+        font-weight: 500;
+    }
+    #sidebar li img {
+        height: 100%;
+        float: left;
+        margin-right: .5em;
+}
+
+#viewer {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        overflow: auto;
+    }
+    #viewer .page {
+        display: block;
+        margin: auto;
+        grid-column: 2;
+        max-width: 100%;
+    }
+    #viewer.zoomable .page {
+        cursor: zoom-in;
+    }
+    #viewer.zoom .page {
+        max-width: none;
+        cursor: zoom-out;
+    }
+    #viewer .test {
+        position: absolute;
+        left: -9999em;
+        top: -9999em;
+        opacity: 0;
+        pointer-events: none;
+    }
+    #viewer .next, #viewer .prev {
+        grid-row: 1;
+        grid-column: 3;
+        width: 40px;
+        background: #ddd url('../img/next.svg') center / 20px 20px no-repeat;
+        cursor: pointer;
+        opacity: 0;
+        transition: background .2s, opacity .2s;
+    }
+    #viewer .next:hover, #viewer .prev:hover {
+        opacity: 1;
+    }
+    #viewer .next:active, #viewer .prev:active {
+        background-color: #ccc;
+    }
+    #viewer .prev {
+        grid-column: 1;
+        background-image: url('../img/prev.svg');
+}
+
+#busy-screen {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: background .2s;
+    }
+    #busy-screen.show {
+        cursor: wait;
+        background: #ddd;
+        pointer-events: all;
 }
