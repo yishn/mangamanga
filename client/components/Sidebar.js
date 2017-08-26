@@ -18,8 +18,9 @@ export default class Sidebar extends Component {
                         class={classNames({current: this.props.current === i})}
                         onClick={this.handleItemClick}
                     >
-                        <img src={item.cover} alt="Cover" />
-                        <span title={item.title}>{item.title}</span>
+                        <img class="cover" src={item.cover} alt="Cover" />
+                        <span class="title" title={item.title}>{item.title}</span>
+                        <img class="chapters" src="./img/chapters.svg" alt="Chapters" title="Select Chapter" />
                     </li>
                 )}
             </ul>

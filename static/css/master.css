@@ -30,12 +30,11 @@ body {
         list-style: none;
     }
     #sidebar li {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-column-gap: .5em;
         padding: .5em;
         height: 80px;
-        overflow: hidden;
-        line-height: calc(80px - 1em);
-        text-overflow: ellipsis;
-        white-space: nowrap;
         cursor: pointer;
         transition: background .2s, color .2s;
     }
@@ -47,10 +46,32 @@ body {
         color: #eee;
         font-weight: 500;
     }
-    #sidebar li img {
+    #sidebar li .cover {
+        display: block;
         height: 100%;
-        float: left;
-        margin-right: .5em;
+    }
+    #sidebar li .title {
+        display: block;
+        overflow: hidden;
+        line-height: calc(80px - 1em);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    #sidebar li .chapters {
+        display: none;
+        margin: auto;
+        padding: .5em;
+        border-radius: 50%;
+        width: 2em;
+        filter: invert(100%);
+        transition: background .2s;
+    }
+    #sidebar li.current .chapters {
+        display: block;
+    }
+    #sidebar li .chapters:hover {
+        background: white;
+        filter: none;
 }
 
 #viewer {
