@@ -87,6 +87,9 @@ body {
         opacity: 0;
         transition: background .2s, opacity .2s;
     }
+    #viewer.loading .next, #viewer.loading .prev {
+        pointer-events: none;
+    }
     #viewer .next:hover, #viewer .prev:hover {
         opacity: 1;
     }

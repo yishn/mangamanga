@@ -1,3 +1,5 @@
+const url = require('url')
+
 const providers = [
     require('./providers/mangafox')
 ]

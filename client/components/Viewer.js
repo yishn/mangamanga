@@ -18,6 +18,8 @@ export default class Viewer extends Component {
         })
 
         document.addEventListener('keyup', evt => {
+            if (this.props.loading) return
+
             if (evt.keyCode === 37) {
                 // Left
 
@@ -72,7 +74,8 @@ export default class Viewer extends Component {
             id="viewer"
             class={classNames({
                 zoom: this.state.zoom,
-                zoomable: this.state.zoomable
+                zoomable: this.state.zoomable,
+                loading: this.props.loading
             })}
         >
             <img

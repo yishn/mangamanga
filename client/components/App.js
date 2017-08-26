@@ -2,6 +2,7 @@ import {h, Component} from 'preact'
 import fetch from 'unfetch'
 
 import Sidebar from './Sidebar'
+import PropsLoader from './PropsLoader'
 import Viewer from './Viewer'
 import BusyScreen from './BusyScreen'
 
@@ -11,8 +12,7 @@ export default class App extends Component {
 
         this.state = {
             busy: false,
-            current: null,
-            image: null,
+            current: 0,
             list: [
                 {
                     title: 'Onepunch-Man',
@@ -42,8 +42,7 @@ export default class App extends Component {
     }
 
     getPage(url = null) {
-        let update = url == null
-        if (update) url = this.state.list[this.state.current].page
+        if (url == null) url = this.state.list[this.state.current].page
 
         if (this.mangaPage != null && this.mangaPage.url === url)
             return Promise.resolve(this.mangaPage)
@@ -51,14 +50,10 @@ export default class App extends Component {
         return fetch(`./page/?url=${url}`)
         .then(r => r.ok ? r.json() : Promise.reject())
         .then(data => this.mangaPage = data)
-        .then(data => update ? (this.setState({image: data.src}), data) : data)
     }
 
     handleItemClick = evt => {
-        this.setState({busy: true, current: evt.index})
-
-        this.getPage()
-        .then(data => this.setState({busy: false}))
+        this.setState({current: evt.index})
     }
 
     handleNextClick = () => {
@@ -82,13 +77,12 @@ export default class App extends Component {
             })
         })
         .then(url => this.setState({
+            busy: false,
             list: this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
         }))
-        .then(() => this.getPage())
-        .then(() => this.setState({busy: false}))
     }
 
     handlePreviousClick = () => {
@@ -114,13 +108,12 @@ export default class App extends Component {
             })
         })
         .then(url => this.setState({
+            busy: false,
             list: this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
         }))
-        .then(() => this.getPage())
-        .then(() => this.setState({busy: false}))
     }
 
     render() {
@@ -131,11 +124,13 @@ export default class App extends Component {
                 onItemClick={this.handleItemClick}
             />
 
-            <Viewer
-                src={this.state.image}
+            <PropsLoader
+                src={this.getPage().then(x => x.src)}
                 onPreviousClick={this.handlePreviousClick}
                 onNextClick={this.handleNextClick}
-            />
+            >
+                {props => <Viewer {...props} />}
+            </PropsLoader>
 
             <BusyScreen
                 show={this.state.busy}

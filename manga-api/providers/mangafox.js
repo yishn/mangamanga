@@ -1,3 +1,4 @@
+const path = require('path').posix
 const {URL} = require('url')
 const request = require('request-promise-native')
 const {JSDOM} = require('jsdom')
@@ -76,7 +77,7 @@ exports.page = function(url) {
             .filter(option => option.value !== '0')
             .map(option => ({
                 id: option.value,
-                url: url.slice(0, -[...url].reverse().indexOf('/')) + `${option.value}.html`
+                url: path.join(url, `../${option.value}.html`).replace('http:/', 'http://')
             }))
     }))
 }
