@@ -22,6 +22,7 @@ exports.info = createMethod('info')
 exports.page = function(url) {
     if (!(url in pageCache)) {
         let result = createMethod('page')(url)
+        if ('error' in result) return result
         pageCache[url] = result
     }
 
