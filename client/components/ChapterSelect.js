@@ -2,6 +2,13 @@ import {h, Component} from 'preact'
 import classNames from 'classnames'
 
 export default class ChapterSelect extends Component {
+    handleChapterClick = evt => {
+        let {id} = evt.currentTarget.dataset
+        let {onChapterClick = () => {}} = this.props
+
+        onChapterClick({id})
+    }
+
     render() {
         if (this.props.loading) return <section id="chapter-select"/>
 
@@ -32,6 +39,7 @@ export default class ChapterSelect extends Component {
                     <li
                         data-id={chapter.id}
                         class={classNames({current: this.props.chapter === chapter.id})}
+                        onClick={this.handleChapterClick}
                     >
                         <strong>{chapter.date}</strong> <em>{chapter.id}</em> {chapter.title}
                     </li>

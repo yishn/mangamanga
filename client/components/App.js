@@ -35,38 +35,40 @@ export default class App extends Component {
     getManga(url = null) {
         if (url == null) url = this.state.list[this.state.current].url
 
-        if (this.manga != null && this.manga.url === url)
-            return Promise.resolve(this.manga)
+        if (this.mangaPromise == null)
+            this.mangaPromise = Promise.resolve({url: null})
 
-        return fetch(`./manga/?url=${url}`)
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(data => this.manga = data)
-        .then(data => {
-            this.setState({
-                list: this.state.list.map(item => item.url !== url ? item : {
-                    ...item,
-                    title: data.title,
-                    cover: data.cover
+        return this.mangaPromise = this.mangaPromise.then(x => x.url === url ? x
+            : fetch(`./manga/?url=${url}`)
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(data => {
+                this.setState({
+                    list: this.state.list.map(item => item.url !== url ? item : {
+                        ...item,
+                        title: data.title,
+                        cover: data.cover
+                    })
                 })
-            })
 
-            return data
-        })
+                return data
+            })
+        )
     }
 
     getPage(url = null) {
         if (url == null) url = this.state.list[this.state.current].page
 
-        if (this.mangaPage != null && this.mangaPage.url === url)
-            return Promise.resolve(this.mangaPage)
+        if (this.mangaPagePromise == null)
+            this.mangaPagePromise = Promise.resolve({url: null})
 
-        return fetch(`./page/?url=${url}`)
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(data => this.mangaPage = data)
+        return this.mangaPagePromise = this.mangaPagePromise.then(x => x.url === url ? x
+            : fetch(`./page/?url=${url}`)
+            .then(r => r.ok ? r.json() : Promise.reject())
+        )
     }
 
     handleItemClick = evt => {
-        this.setState({current: evt.index})
+        this.setState({current: evt.index, selectChapter: false})
     }
 
     handleNextClick = () => {
@@ -90,12 +92,13 @@ export default class App extends Component {
             })
         })
         .then(url => this.setState({
-            busy: false,
             list: this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
         }))
+        .catch(() => {})
+        .then(() => this.setState({busy: false}))
     }
 
     handlePreviousClick = () => {
@@ -121,12 +124,13 @@ export default class App extends Component {
             })
         })
         .then(url => this.setState({
-            busy: false,
             list: this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
         }))
+        .catch(() => {})
+        .then(() => this.setState({busy: false}))
     }
 
     handleOpenChapterSelect = () => {
@@ -135,6 +139,18 @@ export default class App extends Component {
 
     handleCloseChapterSelect = () => {
         this.setState({selectChapter: false})
+    }
+
+    handleChapterClick = evt => {
+        this.getManga()
+        .then(data => data.chapters.find(x => x.id === evt.id).url)
+        .then(url => this.setState({
+            selectChapter: false,
+            list: this.state.list.map((x, i) => i !== this.state.current ? x : {
+                ...x,
+                page: url
+            })
+        }))
     }
 
     render() {
@@ -163,6 +179,7 @@ export default class App extends Component {
                         chapter={props.page && props.page.chapter}
 
                         onCloseClick={this.handleCloseChapterSelect}
+                        onChapterClick={this.handleChapterClick}
                     />
                 }
             </PropsLoader>

@@ -18,6 +18,10 @@ export default class Sidebar extends Component {
         onSelectChapterClick({index: +index})
     }
 
+    handleCoverError = evt => {
+        evt.currentTarget.src = './img/blank.svg'
+    }
+
     render() {
         return <section id="sidebar">
             <ul>
@@ -27,7 +31,7 @@ export default class Sidebar extends Component {
                         class={classNames({current: this.props.current === i})}
                         onClick={this.handleItemClick}
                     >
-                        <img class="cover" src={item.cover} />
+                        <img class="cover" src={item.cover} onError={this.handleCoverError} />
                         <span class="title" title={item.title}>{item.title}</span>
 
                         <img

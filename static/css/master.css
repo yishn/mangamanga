@@ -31,7 +31,7 @@ body {
     }
     #sidebar li {
         display: grid;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: 3em 1fr auto;
         grid-column-gap: .5em;
         padding: .5em;
         height: 80px;
@@ -48,7 +48,10 @@ body {
     }
     #sidebar li .cover {
         display: block;
-        height: 100%;
+        margin: auto;
+        max-height: 100%;
+        max-width: 100%;
+        background: #bbb;
     }
     #sidebar li .title {
         display: block;
@@ -177,7 +180,7 @@ body {
         cursor: pointer;
     }
     #chapter-select .chapters li:hover {
-        background: #ccc;
+        background: #ddd;
         color: #333;
     }
     #chapter-select .chapters li.current {
