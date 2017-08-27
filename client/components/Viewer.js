@@ -12,26 +12,13 @@ export default class Viewer extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', () => {
-            clearTimeout(this.resizeId)
-            this.resizeId = setTimeout(this.updateState, 500)
-        })
+        window.addEventListener('resize', this.handleResize)
+        document.addEventListener('keyup', this.handleKeyUp)
+    }
 
-        document.addEventListener('keyup', evt => {
-            if (this.props.loading) return
-
-            if (evt.keyCode === 37) {
-                // Left
-
-                let {onPreviousClick = () => {}} = this.props
-                onPreviousClick(evt)
-            } else if (evt.keyCode === 39) {
-                // Right
-
-                let {onNextClick = () => {}} = this.props
-                onNextClick(evt)
-            }
-        })
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize)
+        document.removeEventListener('keyup', this.handleKeyUp)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -60,6 +47,27 @@ export default class Viewer extends Component {
             this.setState(({zoom}) => ({zoom: !zoom}), () => {
                 if (!this.state.zoom) this.updateState()
             })
+        }
+    }
+
+    handleResize = () => {
+        clearTimeout(this.resizeId)
+        this.resizeId = setTimeout(this.updateState, 500)
+    }
+
+    handleKeyUp = evt => {
+        if (this.props.loading) return
+
+        if (evt.keyCode === 37) {
+            // Left
+
+            let {onPreviousClick = () => {}} = this.props
+            onPreviousClick(evt)
+        } else if (evt.keyCode === 39) {
+            // Right
+
+            let {onNextClick = () => {}} = this.props
+            onNextClick(evt)
         }
     }
 

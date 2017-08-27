@@ -4,6 +4,7 @@ import fetch from 'unfetch'
 import Sidebar from './Sidebar'
 import PropsLoader from './PropsLoader'
 import Viewer from './Viewer'
+import ChapterSelect from './ChapterSelect'
 import BusyScreen from './BusyScreen'
 
 export default class App extends Component {
@@ -13,6 +14,7 @@ export default class App extends Component {
         this.state = {
             busy: false,
             current: 0,
+            selectChapter: false,
             list: [
                 {
                     title: 'Onepunch-Man',
@@ -65,7 +67,6 @@ export default class App extends Component {
 
     handleItemClick = evt => {
         this.setState({current: evt.index})
-        this.getManga()
     }
 
     handleNextClick = () => {
@@ -128,6 +129,14 @@ export default class App extends Component {
         }))
     }
 
+    handleOpenChapterSelect = () => {
+        this.setState({selectChapter: true})
+    }
+
+    handleCloseChapterSelect = () => {
+        this.setState({selectChapter: false})
+    }
+
     render() {
         return <div id="root">
             <Sidebar
@@ -135,15 +144,27 @@ export default class App extends Component {
                 current={this.state.current}
 
                 onItemClick={this.handleItemClick}
-                onSelectChapterClick={console.log}
+                onSelectChapterClick={this.handleOpenChapterSelect}
             />
 
-            <PropsLoader
-                src={this.getPage().then(x => x.src)}
-                onPreviousClick={this.handlePreviousClick}
-                onNextClick={this.handleNextClick}
-            >
-                {props => <Viewer {...props} />}
+            <PropsLoader page={this.getPage()} manga={this.getManga()}>
+                {props => !this.state.selectChapter
+                    ? <Viewer
+                        loading={props.loading}
+                        src={props.page && props.page.src}
+
+                        onPreviousClick={this.handlePreviousClick}
+                        onNextClick={this.handleNextClick}
+                    />
+
+                    : <ChapterSelect
+                        {...props ? props.manga : {}}
+                        loading={props.loading}
+                        chapter={props.page && props.page.chapter}
+
+                        onCloseClick={this.handleCloseChapterSelect}
+                    />
+                }
             </PropsLoader>
 
             <BusyScreen
