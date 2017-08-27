@@ -23,12 +23,15 @@ exports.info = createMethod('info')
 
 exports.page = function(url) {
     if (!(url in pageCache)) {
-        let result = createMethod('page')(url)
-        if ('error' in result) return result
-        pageCache[url] = result
+        return createMethod('page')(url).then(result => {
+            if (!('error' in result))
+                pageCache[url] = result
+
+            return result
+        })
     }
 
-    return pageCache[url]
+    return Promise.resolve(pageCache[url])
 }
 
 exports.clearCache = function() {

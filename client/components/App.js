@@ -33,6 +33,7 @@ export default class App extends Component {
     }
 
     getManga(url = null) {
+        if (this.state.list[this.state.current] == null) return Promise.resolve(null)
         if (url == null) url = this.state.list[this.state.current].url
 
         if (this.mangaPromise == null)
@@ -52,10 +53,12 @@ export default class App extends Component {
 
                 return data
             })
+            .catch(() => this.mangaPromise = null)
         )
     }
 
     getPage(url = null) {
+        if (this.state.list[this.state.current] == null) return Promise.resolve(null)
         if (url == null) url = this.state.list[this.state.current].page
 
         if (this.mangaPagePromise == null)
@@ -64,6 +67,7 @@ export default class App extends Component {
         return this.mangaPagePromise = this.mangaPagePromise.then(x => x.url === url ? x
             : fetch(`./page/?url=${url}`)
             .then(r => r.ok ? r.json() : Promise.reject())
+            .catch(() => this.mangaPagePromise = null)
         )
     }
 
@@ -163,7 +167,10 @@ export default class App extends Component {
                 onSelectChapterClick={this.handleOpenChapterSelect}
             />
 
-            <PropsLoader page={this.getPage()} manga={this.getManga()}>
+            <PropsLoader
+                page={this.getPage().catch(() => {})}
+                manga={this.getManga().catch(() => {})}
+            >
                 {props => !this.state.selectChapter
                     ? <Viewer
                         loading={props.loading}
