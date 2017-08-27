@@ -15,21 +15,29 @@ export default class App extends Component {
             busy: false,
             current: 0,
             selectChapter: false,
-            list: [
-                {
-                    title: 'Onepunch-Man',
-                    cover: 'http://l.mfcdn.net/store/manga/11362/cover.jpg?token=14ad73b4d0abc29d49e259119a086b983eabe881&ttl=1503824400&v=1502858890',
-                    url: 'http://mangafox.me/manga/onepunch_man/',
-                    page: 'http://mangafox.me/manga/onepunch_man/vTBD/c072.5/1.html'
-                },
-                {
-                    title: 'Shingeki no Kyojin',
-                    cover: 'http://l.mfcdn.net/store/manga/9011/cover.jpg?token=4b2003653763ff746942b64db0e1d09fef98bde4&ttl=1503838800&v=1502789942',
-                    url: 'http://mangafox.me/manga/shingeki_no_kyojin/',
-                    page: 'http://mangafox.me/manga/shingeki_no_kyojin/v20/c082/1.html'
-                }
-            ]
+            list: []
         }
+    }
+
+    componentDidMount() {
+        this.setState({busy: true})
+
+        fetch('./list')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(data => this.setState({
+            busy: false,
+            list: data.list
+        }))
+    }
+
+    updateList(data) {
+        this.setState({list: data})
+
+        fetch('./list', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({list: data})
+        })
     }
 
     getManga(url = null) {
@@ -43,13 +51,11 @@ export default class App extends Component {
             : fetch(`./manga/?url=${url}`)
             .then(r => r.ok ? r.json() : Promise.reject())
             .then(data => {
-                this.setState({
-                    list: this.state.list.map(item => item.url !== url ? item : {
-                        ...item,
-                        title: data.title,
-                        cover: data.cover
-                    })
-                })
+                this.updateList(this.state.list.map(item => item.url !== url ? item : {
+                    ...item,
+                    title: data.title,
+                    cover: data.cover
+                }))
 
                 return data
             })
@@ -95,12 +101,12 @@ export default class App extends Component {
                 return Promise.reject(new Error('Not found'))
             })
         })
-        .then(url => this.setState({
-            list: this.state.list.map((x, i) => i !== this.state.current ? x : {
+        .then(url => this.updateList(
+            this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
-        }))
+        ))
         .catch(() => {})
         .then(() => this.setState({busy: false}))
     }
@@ -127,12 +133,12 @@ export default class App extends Component {
                 return Promise.reject(new Error('Not found'))
             })
         })
-        .then(url => this.setState({
-            list: this.state.list.map((x, i) => i !== this.state.current ? x : {
+        .then(url => this.updateList(
+            this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
-        }))
+        ))
         .catch(() => {})
         .then(() => this.setState({busy: false}))
     }
@@ -148,13 +154,13 @@ export default class App extends Component {
     handleChapterClick = evt => {
         this.getManga()
         .then(data => data.chapters.find(x => x.id === evt.id).url)
-        .then(url => this.setState({
-            selectChapter: false,
-            list: this.state.list.map((x, i) => i !== this.state.current ? x : {
+        .then(url => this.updateList(
+            this.state.list.map((x, i) => i !== this.state.current ? x : {
                 ...x,
                 page: url
             })
-        }))
+        ))
+        .then(() => this.setState({selectChapter: false}))
     }
 
     render() {

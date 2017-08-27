@@ -18,6 +18,7 @@
     "url": "https://github.com/yishn/mangamanga/issues"
   },
   "dependencies": {
+    "body-parser": "^1.17.2",
     "classnames": "^2.2.5",
     "jsdom": "^11.2.0",
     "preact": "^8.2.4",
