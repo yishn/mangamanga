@@ -44,13 +44,13 @@ exports.info = function(url) {
         genres: querySelectorAll('#title a[href*="genres"]')
             .map(a => a.textContent),
         summary: attr(querySelector('.summary'), 'textContent'),
-        chapters: querySelectorAll('.chlist li').map(li => ({
+        chapters: querySelectorAll('.chlist li').map(li => (url => ({
             date: attr(li.querySelector('.date'), 'textContent'),
-            url: attr(li.querySelector('.tips'), 'href'),
+            url: url.slice(-6) === '1.html' ? url : path.join(url, '1.html').replace('http:/', 'http://'),
             id: attr(li.querySelector('.tips'), 'textContent')
                 .replace(title, '').trim(),
             title: attr(li.querySelector('.title'), 'textContent')
-        })).reverse()
+        }))(attr(li.querySelector('.tips'), 'href'))).reverse()
     }))
 }
 
