@@ -63,14 +63,14 @@ body {
         padding: .5em;
         border-radius: 50%;
         width: 2em;
+        background: white;
         filter: invert(100%);
-        transition: background .2s;
+        transition: filter .2s;
     }
     #sidebar li.current .chapters {
         display: block;
     }
     #sidebar li .chapters:hover {
-        background: white;
         filter: none;
 }
 

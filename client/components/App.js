@@ -65,6 +65,7 @@ export default class App extends Component {
 
     handleItemClick = evt => {
         this.setState({current: evt.index})
+        this.getManga()
     }
 
     handleNextClick = () => {
@@ -132,7 +133,9 @@ export default class App extends Component {
             <Sidebar
                 list={this.state.list}
                 current={this.state.current}
+
                 onItemClick={this.handleItemClick}
+                onSelectChapterClick={console.log}
             />
 
             <PropsLoader

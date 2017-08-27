@@ -9,6 +9,15 @@ export default class Sidebar extends Component {
         onItemClick({index: +index})
     }
 
+    handleSelectChapterClick = evt => {
+        evt.stopPropagation()
+
+        let {index} = evt.currentTarget.parentNode.dataset
+        let {onSelectChapterClick = () => {}} = this.props
+
+        onSelectChapterClick({index: +index})
+    }
+
     render() {
         return <section id="sidebar">
             <ul>
@@ -20,7 +29,14 @@ export default class Sidebar extends Component {
                     >
                         <img class="cover" src={item.cover} alt="Cover" />
                         <span class="title" title={item.title}>{item.title}</span>
-                        <img class="chapters" src="./img/chapters.svg" alt="Chapters" title="Select Chapter" />
+
+                        <img
+                            class="chapters"
+                            src="./img/chapters.svg"
+                            alt="Select Chapter"
+                            title="Select Chapter"
+                            onClick={this.handleSelectChapterClick}
+                        />
                     </li>
                 )}
             </ul>
