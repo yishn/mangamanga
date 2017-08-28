@@ -2,7 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const bodyParser = require('body-parser')
 const express = require('express')
+const opn = require('opn')
 const manga = require('../manga-api')
+
 const app = express()
 
 app.use(express.static('static'))
@@ -43,4 +45,5 @@ app.post('/list', (req, res) => {
 
 app.listen(3000, () => {
     console.log('mangamanga listening at http://localhost:3000/...')
+    opn('http://localhost:3000/')
 })
