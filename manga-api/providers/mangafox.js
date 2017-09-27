@@ -4,10 +4,17 @@ const request = require('request-promise-native')
 const {JSDOM} = require('jsdom')
 
 const attr = (obj, attr) => obj == null ? '' : obj[attr]
-const headers = {'User-Agent': 'mangamanga'}
+
+function customRequest(url, options = {}) {
+    return request(Object.assign({
+        url,
+        headers: {'User-Agent': 'mangamanga'},
+        rejectUnauthorized: false
+    }, options))
+}
 
 exports.search = function(str) {
-    return request({url: `http://mangafox.me/search.php?name=${str}&advopts=1`, headers})
+    return customRequest(`http://mangafox.me/search.php?name=${str}&advopts=1`)
     .then(body => new JSDOM(body).window.document)
     .then(document => [...document.querySelector('#mangalist .list li')])
     .then(liEls => liEls.map(li => ({
@@ -26,7 +33,7 @@ exports.supports = function(url) {
 }
 
 exports.info = function(url) {
-    return request({url, headers})
+    return customRequest(url)
     .then(body => new JSDOM(body).window.document)
     .then(document => ({
         querySelector: x => document.querySelector(x),
@@ -55,7 +62,7 @@ exports.info = function(url) {
 }
 
 exports.page = function(url) {
-    return request({url, headers, gzip: true})
+    return customRequest(url, {gzip: true})
     .then(body => new JSDOM(body).window.document)
     .then(document => ({
         querySelector: x => document.querySelector(x),
