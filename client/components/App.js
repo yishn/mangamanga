@@ -143,8 +143,8 @@ export default class App extends Component {
         .then(() => this.setState({busy: false}))
     }
 
-    handleOpenChapterSelect = () => {
-        this.setState({selectChapter: true})
+    handleToggleChapterSelect = () => {
+        this.setState(({selectChapter}) => ({selectChapter: !selectChapter}))
     }
 
     handleCloseChapterSelect = () => {
@@ -170,7 +170,7 @@ export default class App extends Component {
                 current={this.state.current}
 
                 onItemClick={this.handleItemClick}
-                onSelectChapterClick={this.handleOpenChapterSelect}
+                onSelectChapterClick={this.handleToggleChapterSelect}
             />
 
             <PropsLoader
